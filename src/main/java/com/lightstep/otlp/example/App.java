@@ -25,8 +25,6 @@ public class App {
       .of("lightstep-access-token", ASCII_STRING_MARSHALLER);
 
   public static void main(String[] args) {
-    System.setProperty("OTEL_RESOURCE_ATTRIBUTES", "service.name=test");
-
     // TODO: set LS access token
     final String lsToken = "your-token";
 
@@ -43,13 +41,11 @@ public class App {
                   public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(
                       MethodDescriptor<ReqT, RespT> method, CallOptions callOptions, Channel next) {
                     return new SimpleForwardingClientCall<ReqT, RespT>(
-                        next.newCall(method,
-                            callOptions.withOption(CallOptions.Key.create("service.name"), "test"))
+                        next.newCall(method, callOptions)
                     ) {
                       @Override
                       public void start(final Listener<RespT> responseListener, Metadata headers) {
                         headers.put(ACCESS_TOKEN_HEADER, lsToken);
-                        //headers.put(serviceName, "test");
                         super.start(new Listener<RespT>() {
                           @Override
                           public void onHeaders(Metadata headers) {
