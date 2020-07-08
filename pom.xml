@@ -11,7 +11,11 @@
   <modules>
     <module>lightstep-otlp-exporter</module>
     <module>lightstep-otlp-agent</module>
+    <module>lightstep-otlp-common</module>
   </modules>
+
+  <name>Lightstep OpenTelemetry OTLP</name>
+  <description>Lightstep OpenTelemetry OTLP</description>
 
   <properties>
     <maven.compiler.source>1.7</maven.compiler.source>

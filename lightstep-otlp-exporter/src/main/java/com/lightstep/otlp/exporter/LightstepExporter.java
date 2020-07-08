@@ -1,5 +1,6 @@
 package com.lightstep.otlp.exporter;
 
+import com.lightstep.otlp.common.VariablesConverter;
 import io.opentelemetry.exporters.otlp.OtlpGrpcSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
@@ -8,9 +9,9 @@ public class LightstepExporter {
 
   public static class Builder {
     private String accessToken = "";
-    private String satelliteUrl = "ingest.lightstep.com";
-    private long deadlineMillis = 30000;
-    private boolean useTransportSecurity = true;
+    private String satelliteUrl = VariablesConverter.DEFAULT_LS_SATELLITE_URL;
+    private long deadlineMillis = VariablesConverter.DEFAULT_LS_DEADLINE_MILLIS;
+    private boolean useTransportSecurity = VariablesConverter.DEFAULT_LS_USE_TLS;
 
     /**
      * Sets the token for Lightstep access
@@ -57,10 +58,7 @@ public class LightstepExporter {
      * @return a new exporter's instance
      */
     public OtlpGrpcSpanExporter build() {
-      System.setProperty("otel.otlp.endpoint", satelliteUrl);
-      System.setProperty("otel.otlp.use.tls", String.valueOf(useTransportSecurity));
-      System.setProperty("otel.otlp.span.timeout", String.valueOf(deadlineMillis));
-      System.setProperty("otel.otlp.metadata", "lightstep-access-token=" + accessToken);
+      VariablesConverter.convert(satelliteUrl, useTransportSecurity, deadlineMillis, accessToken);
 
       return OtlpGrpcSpanExporter.newBuilder()
           .readSystemProperties()
@@ -83,11 +81,10 @@ public class LightstepExporter {
      */
     public static Builder fromEnv() {
       final Builder builder = new Builder();
-      builder.accessToken = getProperty("LS_ACCESS_TOKEN", "");
-      builder.useTransportSecurity = Boolean.parseBoolean(getProperty("LS_USE_TLS", "true"));
-      builder.deadlineMillis = Long.parseLong(
-          getProperty("LS_DEADLINE_MILLIS", String.valueOf(30000)));
-      builder.satelliteUrl = getProperty("LS_SATELLITE_URL", "ingest.lightstep.com");
+      builder.accessToken = VariablesConverter.getAccessToken();
+      builder.useTransportSecurity = VariablesConverter.useTransportSecurity();
+      builder.deadlineMillis = VariablesConverter.getDeadlineMillis();
+      builder.satelliteUrl = VariablesConverter.getSatelliteUrl();
 
       return builder;
     }
