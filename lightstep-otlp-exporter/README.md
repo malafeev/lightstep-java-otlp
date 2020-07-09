@@ -34,7 +34,10 @@ OtlpGrpcSpanExporter exporter = builder.build();
 
 // Add Span Processor with Lightstep exporter
 OpenTelemetrySdk.getTracerProvider()
-                       .addSpanProcessor(SimpleSpanProcessor.newBuilder(exporter).build());
+                      .addSpanProcessor(SimpleSpanProcessor.newBuilder(exporter).build());
+
+// Get tracer
+Tracer tracer = OpenTelemetry.getTracer("instrumentation-library-name","1.0.0");
 ```
 
 ### Configuration from system properties and environmental variables
