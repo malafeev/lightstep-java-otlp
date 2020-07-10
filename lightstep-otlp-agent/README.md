@@ -1,4 +1,4 @@
-# Lightstep OTLP Auto Exporter Agent
+# Lightstep OTLP Agent
 
 The Lightstep OTLP Agent is a configuration layer over OpenTelemetry Instrumentation Agent.
 
